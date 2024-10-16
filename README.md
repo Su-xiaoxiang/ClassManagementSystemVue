@@ -1,6 +1,6 @@
-# Vue 3 Tailwind CSS JWT Cookie CryptoJS Vant Element Plus
+# ClassManagementSystemVue
 
-基于 `Vue 3` 的前端项目模板，使用 `Tailwind CSS`、`JWT`、`Cookie`、`CryptoJS`、`Vant` 和 `Element Plus` 技术栈。
+基于 `Vue 3` 的前端项目，使用 `Tailwind CSS`、`JWT`、`Cookie`、`CryptoJS`、`Vant` 和 `Element Plus` 技术栈。
 
 ## 🚀 特性
 
@@ -15,14 +15,18 @@
 ## 📦 生态系统
 
 在这里，你可以找到许多现成的模板，包含 `Vue 3`、`Tailwind CSS` 等技术栈。推荐访问我的 GitHub 主页以获取更多资源。
-
+## 📦 项目介绍
+```bash
+本项目为班级管理系统项目 为前端工程. 此项目采用前后端分离的架构，前端使用 Vue 3、Tailwind CSS、Vant 和 Element Plus，后端使用 Spring Boot 和 MyBatis。
+未经过允许的情况下，请忽运作商业用途
+```
 ## 📖 快速开始
 
 ### 1. 克隆项目
 
 ```bash
-git clone git@github.com:Su-xiaoxiang/Basic-Vue3.git
-cd Basic-Vue3
+git clone git@github.com:Su-xiaoxiang/ClassManagementSystemVue.git
+cd ClassManagementSystemVue
 ```
 ### 2. 安装依赖
 

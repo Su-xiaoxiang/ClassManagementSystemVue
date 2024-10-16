@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center bg-gray-500">
     <header class="mb-6 text-2xl font-semibold  animate-pulse text-transparent bg-gradient-to-r bg-clip-text  from-red-50 via-fuchsia-500 to-green-200">
-      BasicVue3
+      班级管理系统
     </header>
     <div class="bg-white shadow-md md:flex xl:flex">
       <!-- 左侧图片 -->
@@ -18,8 +18,7 @@
       </div>
     </div>
     <footer class="mt-8 text-gray-0 text-sm text-center">
-      版权所有© Copyright 2024-现在 灵诺科技工作室所有 中国·河南省信阳市息县
-      信阳师范大学淮河校区 版本V-1.0.0
+      版权所有© Copyright 2024-现在 灵诺科技工作室所有  版本V-1.0.0
     </footer>
   </div>
 </template>
