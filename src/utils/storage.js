@@ -1,11 +1,11 @@
 import { decryptUserId } from '@/utils/userId.js'
 // 约定一个通用的键名
-const INFO_KEY = 'LingNuo'
+const INFO_KEY = 'ClassManagementSystem'
 
 // 设置个人信息
 export const setInfo = (obj) => {
   const expiryDate = new Date();
-  expiryDate.setMinutes(expiryDate.getMinutes() + 59); // 设置1小时后过期
+  expiryDate.setMinutes(expiryDate.getMinutes() + 59); // 设置59min后过期
   const dataToStore = encodeURIComponent(JSON.stringify(obj));
   document.cookie = `${INFO_KEY}=${dataToStore}; expires=${expiryDate.toUTCString()}; path=/`;
 }

@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '@/views/login/index.vue'
-import UserInfo from '@/views/UserInfo/index.vue'
 import { getInfo } from '@/utils/storage'
 import { showFailToast } from 'vant'
+import Login from '@/views/login/index.vue'
+import index from '@/views/UserInfo/index.vue'
+import HomePageIndex from '@/views/UserInfo/HomePage/index.vue'
+import UserInfo from '@/views/UserInfo/UserInfo/index.vue'
+import UserSituation from '@/views/UserInfo/UserSituation/index.vue'
 import NotFound from '@/404.vue' // 注意这里的路径
 
 // 定义路由
@@ -10,11 +13,24 @@ const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
   {
-    path: '/userInfo',
-    component: UserInfo,
+    path: '/index',
+    component: index,
     meta: {
       requiresAuth: true
-    }
+    },
+    beforeEnter: (to, from, next) => {
+      if (to.path === '/index') {
+        // 重定向到默认的子路由 '/index/HomePageIndex'
+        next('/index/HomePageIndex');
+      } else {
+        next();  // 继续导航到其他子路由
+      }
+    },
+    children: [
+      { path: 'HomePageIndex', component: HomePageIndex },  // 默认子路由
+      { path: 'UserInfo', component: UserInfo },  // 其他子路由
+      { path: 'UserSituation', component: UserSituation },  // 其他子路由
+    ]
   },
   { path: '/:pathMatch(.*)*', component: NotFound } // 通配符路由的语法变化
 ]

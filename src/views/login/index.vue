@@ -58,7 +58,7 @@ const IsLogin = () => {
       })
     } else {
       router.push({
-        path: '/userInfo',
+        path: '/index',
       })
     }
   } else {
@@ -85,7 +85,7 @@ const loginAction = async () => {
         if (Number(rolesid.value) === 1 || Number(rolesid.value) === 3) {
           router.push({ path: '/admin' })
         } else {
-          router.push({ path: '/userInfo' });
+          router.push({ path: '/index' });
         }
       } else {
         ElMessage.error(res.msg)
