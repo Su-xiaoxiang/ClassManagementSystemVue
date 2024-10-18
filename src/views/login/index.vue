@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col items-center justify-center bg-gray-500">
     <header class="mb-6 text-2xl font-semibold  animate-pulse text-transparent bg-gradient-to-r bg-clip-text  from-red-50 via-fuchsia-500 to-green-200">
-      班级管理系统
+      班级教学综合信息服务平台
     </header>
     <div class="bg-white shadow-md md:flex xl:flex">
       <!-- 左侧图片 -->

@@ -24,6 +24,7 @@
 ```bash
 1. 完成用户登录功能
 2. 完成HomePageIndex 头部栏以及退出登录功能
+3. 完成HomePageIndex 整体布局
 ```
 ## 📖 快速开始
 
