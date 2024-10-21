@@ -17,10 +17,18 @@
         <button class="bg-blue-500 text-white py-2 rounded hover:bg-blue-600" @click="loginAction">登录</button>
       </div>
     </div>
-    <footer class="mt-8 text-gray-0 text-sm text-center">
-      版权所有© Copyright 2024-现在 灵诺科技工作室所有  版本V-1.0.0
-    </footer>
   </div>
+  <!-- 版权栏 -->
+  <footer class="bg-gray-900 text-white py-6">
+    <div class="container mx-auto text-center">
+      <p class="text-sm font-light">
+        版权所有© Copyright 2024-现在 灵诺科技工作室所有 | 版本 V-1.0.0
+      </p>
+      <p class="text-xs text-gray-400 mt-2">
+        Powered by <span class="text-blue-400">LingNuo Studio</span> | All Rights Reserved
+      </p>
+    </div>
+  </footer>
 </template>
 
 <style scoped>

@@ -3,16 +3,15 @@
     <header class="w-full h-28 flex flex-col">
       <div
         class="bg-rose-300 w-full h-2/3 text-xl  text-left pl-8 pt-5 font-semibold flex justify-between md:text-2xl">
-        <span
-          class="overflow-hidden font-semibold  animate-pulse text-transparent bg-gradient-to-r bg-clip-text  from-red-500 via-fuchsia-500 to-blue-500">班级教学综合信息服务平台</span>
+        <router-link to="/index/HomePageIndex"  class="overflow-hidden font-semibold  animate-pulse text-transparent bg-gradient-to-r bg-clip-text  from-red-500 via-fuchsia-500 to-blue-500">班级教学综合信息服务平台</router-link>
         <div class="hidden md:block  space-x-10   ">
-          <router-link to="/index/HomePageIndex" class="text-gray-500 lg:text-2xl text-xl"
+          <router-link to="/index/HomePageIndex" class="text-gray-500 lg:text-2xl text-xl hover:text-red-400 transition hover:underline"
                        exact-active-class="text-red-400 lg:text-2xl text-xl ">班级首页
           </router-link>
-          <router-link to="/index/UserInfo" class="text-gray-500 lg:text-2xl text-xl"
+          <router-link to="/index/UserInfo" class="text-gray-500 lg:text-2xl text-xl hover:text-red-400 transition hover:underline"
                        exact-active-class="text-red-400 lg:text-2xl text-xl">个人信息
           </router-link>
-          <router-link to="/index/UserSituation" class="text-gray-500 lg:text-2xl text-xl"
+          <router-link to="/index/UserSituation" class="text-gray-500 lg:text-2xl text-xl hover:text-red-400 transition hover:underline"
                        exact-active-class="text-red-400 lg:text-2xl text-xl">情况查询
           </router-link>
         </div>
@@ -71,7 +70,6 @@ const logout = () => {
   router.push('')
   window.location.reload()
 }
-
 </script>
 
 <style scoped>
