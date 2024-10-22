@@ -6,7 +6,8 @@ import index from '@/views/UserInfo/index.vue'
 import HomePageIndex from '@/views/UserInfo/HomePage/index.vue'
 import UserInfo from '@/views/UserInfo/UserInfo/index.vue'
 import UserSituation from '@/views/UserInfo/UserSituation/index.vue'
-import NotFound from '@/404.vue' // 注意这里的路径
+import NotFound from '@/404.vue'
+import { loginAction } from '@/api/login.js' // 注意这里的路径
 
 // 定义路由
 const routes = [
@@ -42,9 +43,8 @@ const router = createRouter({
 })
 
 // 导航守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const token = getInfo().token // 获取 token
-
   // 如果目标路由需要身份验证
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (token === '') {
@@ -56,6 +56,8 @@ router.beforeEach((to, from, next) => {
         next(false) // 如果已经在登录页，取消导航
       }
     } else {
+      // 用户已登录，自动发送请求
+      await loginAction()
       // 用户已登录，继续导航
       next()
     }
@@ -64,5 +66,4 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
 export default router

@@ -189,11 +189,6 @@ const filteredAttendanceData = computed(() => {
   </footer>
 </template>
 
-<script setup>
-import { computed, ref } from 'vue'
-
-// 示例数据省略...
-</script>
 
 <style scoped>
 main {

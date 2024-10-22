@@ -1,24 +1,90 @@
+<script setup>
+//接口调用方式
+import { getImgCarousel } from '@/api/UserInfo/HomePage.js'
+import { onMounted, ref } from 'vue'
+// 普通类型
+const tableLayout = 'auto';
+const tableData = [
+  { Job: '班长', name: 'Tom', Phone: '12345678910' },
+  { Job: '副班长', name: 'Jerry', Phone: '09876543210' },
+  { Job: '班委', name: 'Alice', Phone: '11223344556' },
+  { Job: '班委', name: 'Bob', Phone: '22334455667' },
+  { Job: '班委', name: 'Cathy', Phone: '33445566778' },
+  { Job: '班委', name: 'David', Phone: '44556677889' },
+];
+
+// 添加更多活动
+const activities = [
+  { title: '运动会', date: '2024年10月30日' },
+  { title: '读书分享会', date: '2024年11月5日' },
+  { title: '手工艺活动', date: '2024年11月15日' },
+  { title: '音乐晚会', date: '2024年11月25日' },
+  { title: '科技展', date: '2024年12月1日' },
+  { title: '春游活动', date: '2024年12月10日' },
+  { title: '班级聚会', date: '2024年12月15日' },
+];
+
+// 添加更多学习资源
+const resources = [
+  { name: 'Python编程基础', link: 'https://www.example.com/resource1' },
+  { name: '高等数学自学指南', link: 'https://www.example.com/resource2' },
+  { name: '大学英语学习资料', link: 'https://www.example.com/resource3' },
+  { name: '前端开发教程', link: 'https://www.example.com/resource4' },
+  { name: '数据结构与算法', link: 'https://www.example.com/resource5' },
+  { name: '机器学习入门', link: 'https://www.example.com/resource6' },
+  { name: '项目管理技巧', link: 'https://www.example.com/resource7' },
+];
+// 轮播图图片数组
+const carouselImages =ref([])
+// 函数方法
+const getimgCarousel = async () => {
+  try {
+    // 使用 await 等待 Promise 完成
+    const res = await getImgCarousel();
+
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      console.log("获取轮播图数据成功", res.data);
+      // 获取数据并存储到数组
+      carouselImages.value = res.data;
+
+
+      // 输出存储后的数组
+      console.log("轮播图数据：", carouselImages.value);
+    } else {
+      console.error("获取轮播图数据失败", res);
+    }
+  } catch (error) {
+    console.error("请求发生错误：", error);
+  }
+}
+// 记载页面时记载方法
+onMounted(() => {
+  getimgCarousel()
+})
+</script>
+
 <template>
   <main class="w-full flex-grow flex flex-col justify-between -my-10">
     <!-- 图片轮播图 -->
     <div class="block md:hidden">
       <el-carousel arrow="always" height="220px">
-        <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
-          <img :src="image" class="w-full h-full md:h-full" />
+        <el-carousel-item v-for="(image, index) in carouselImages" :key="index" >
+          <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
     <div class="hidden lg:block">
       <el-carousel arrow="always" height="500px">
         <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
-          <img :src="image" class="w-full h-full md:h-full" />
+          <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
     <div class="hidden lg:hidden md:block">
       <el-carousel arrow="always" height="400px">
         <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
-          <img :src="image" class="w-full h-full md:h-full" />
+          <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -79,47 +145,6 @@
     </footer>
   </main>
 </template>
-
-<script setup>
-const tableLayout = 'auto';
-const tableData = [
-  { Job: '班长', name: 'Tom', Phone: '12345678910' },
-  { Job: '副班长', name: 'Jerry', Phone: '09876543210' },
-  { Job: '班委', name: 'Alice', Phone: '11223344556' },
-  { Job: '班委', name: 'Bob', Phone: '22334455667' },
-  { Job: '班委', name: 'Cathy', Phone: '33445566778' },
-  { Job: '班委', name: 'David', Phone: '44556677889' },
-];
-
-// 添加更多活动
-const activities = [
-  { title: '运动会', date: '2024年10月30日' },
-  { title: '读书分享会', date: '2024年11月5日' },
-  { title: '手工艺活动', date: '2024年11月15日' },
-  { title: '音乐晚会', date: '2024年11月25日' },
-  { title: '科技展', date: '2024年12月1日' },
-  { title: '春游活动', date: '2024年12月10日' },
-  { title: '班级聚会', date: '2024年12月15日' },
-];
-
-// 添加更多学习资源
-const resources = [
-  { name: 'Python编程基础', link: 'https://www.example.com/resource1' },
-  { name: '高等数学自学指南', link: 'https://www.example.com/resource2' },
-  { name: '大学英语学习资料', link: 'https://www.example.com/resource3' },
-  { name: '前端开发教程', link: 'https://www.example.com/resource4' },
-  { name: '数据结构与算法', link: 'https://www.example.com/resource5' },
-  { name: '机器学习入门', link: 'https://www.example.com/resource6' },
-  { name: '项目管理技巧', link: 'https://www.example.com/resource7' },
-];
-// 轮播图图片数组
-const carouselImages = [
-  'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fGJsdXUlMjBzZWxmaWV8ZW58MHx8fHwxNjc4ODgzOTQz&ixlib=rb-4.0.3&q=80&w=400',
-  'https://images.unsplash.com/photo-1537128254286-7cfe05e6f1b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fGJsdXUlMjBzZWxmaWV8ZW58MHx8fHwxNjc4ODgzOTQz&ixlib=rb-4.0.3&q=80&w=400',
-  'https://images.unsplash.com/photo-1526045612214-e57e4d1c2eb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fGJsdXUlMjBzZWxmaWV8ZW58MHx8fHwxNjc4ODgzOTQz&ixlib=rb-4.0.3&q=80&w=400',
-  'https://images.unsplash.com/photo-1615800275741-ecbe98e2f56e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fGJsdXUlMjBzZWxmaWV8ZW58MHx8fHwxNjc4ODgzOTQz&ixlib=rb-4.0.3&q=80&w=400',
-];
-</script>
 
 <style scoped>
 html, body {
