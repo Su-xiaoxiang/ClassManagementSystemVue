@@ -1,29 +1,10 @@
 <script setup>
 //接口调用方式
-import { getImgCarousel } from '@/api/UserInfo/HomePage.js'
+import { getImgCarousel,getCLassCommittee,getActivities } from '@/api/UserInfo/HomePage.js'
 import { onMounted, ref } from 'vue'
+import { getInfo } from '@/utils/storage.js'
 // 普通类型
 const tableLayout = 'auto';
-const tableData = [
-  { Job: '班长', name: 'Tom', Phone: '12345678910' },
-  { Job: '副班长', name: 'Jerry', Phone: '09876543210' },
-  { Job: '班委', name: 'Alice', Phone: '11223344556' },
-  { Job: '班委', name: 'Bob', Phone: '22334455667' },
-  { Job: '班委', name: 'Cathy', Phone: '33445566778' },
-  { Job: '班委', name: 'David', Phone: '44556677889' },
-];
-
-// 添加更多活动
-const activities = [
-  { title: '运动会', date: '2024年10月30日' },
-  { title: '读书分享会', date: '2024年11月5日' },
-  { title: '手工艺活动', date: '2024年11月15日' },
-  { title: '音乐晚会', date: '2024年11月25日' },
-  { title: '科技展', date: '2024年12月1日' },
-  { title: '春游活动', date: '2024年12月10日' },
-  { title: '班级聚会', date: '2024年12月15日' },
-];
-
 // 添加更多学习资源
 const resources = [
   { name: 'Python编程基础', link: 'https://www.example.com/resource1' },
@@ -36,21 +17,24 @@ const resources = [
 ];
 // 轮播图图片数组
 const carouselImages =ref([])
+// 班委信息数组
+const tableData = ref([])
+// 活动信息数组
+const activities = ref([])
+// 获取当前用户的班级ID
+const classId = ref('')
+classId.value = getInfo().classId
 // 函数方法
+/*获取轮播图信息*/
 const getimgCarousel = async () => {
   try {
     // 使用 await 等待 Promise 完成
-    const res = await getImgCarousel();
+    const res = await getImgCarousel(classId.value);
 
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
-      console.log("获取轮播图数据成功", res.data);
       // 获取数据并存储到数组
       carouselImages.value = res.data;
-
-
-      // 输出存储后的数组
-      console.log("轮播图数据：", carouselImages.value);
     } else {
       console.error("获取轮播图数据失败", res);
     }
@@ -58,9 +42,44 @@ const getimgCarousel = async () => {
     console.error("请求发生错误：", error);
   }
 }
+/*获取班委信息*/
+const getCommittee = async () => {
+  try {
+    // 使用 await 等待 Promise 完成
+    const res = await getCLassCommittee(classId.value);
+
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      tableData.value = res.data
+   } else {
+      console.error("获取轮播图数据失败", res);
+    }
+  } catch (error){
+    console.error("请求发生错误：", error)
+  }
+}
+/*获取活动信息*/
+const getActivitie = async () => {
+  try {
+    // 使用 await 等待 Promise 完成
+    const res = await getActivities(classId.value);
+
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      console.log("获取活动信息成功", res.data);
+      activities.value = res.data
+   } else {
+      console.error("获取轮播图数据失败", res);
+    }
+  } catch (error){
+    console.error("请求发生错误：", error)
+  }
+}
 // 记载页面时记载方法
-onMounted(() => {
-  getimgCarousel()
+onMounted( async () => {
+  await getimgCarousel()
+  await getCommittee()
+  await getActivitie()
 })
 </script>
 
@@ -69,25 +88,28 @@ onMounted(() => {
     <!-- 图片轮播图 -->
     <div class="block md:hidden">
       <el-carousel arrow="always" height="220px">
-        <el-carousel-item v-for="(image, index) in carouselImages" :key="index" >
+        <el-carousel-item v-for="(image, index) in (carouselImages.length ? carouselImages : [{ imgCarouselUrl: 'https://img0.baidu.com/it/u=1760989771,2332546193&fm=253&fmt=auto&app=138&f=JPEG?w=1024&h=405' }])" :key="index" >
           <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
+
     <div class="hidden lg:block">
       <el-carousel arrow="always" height="500px">
-        <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
+        <el-carousel-item v-for="(image, index) in (carouselImages.length ? carouselImages : [{ imgCarouselUrl: 'https://img0.baidu.com/it/u=1760989771,2332546193&fm=253&fmt=auto&app=138&f=JPEG?w=1024&h=405' }])" :key="index">
           <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
+
     <div class="hidden lg:hidden md:block">
       <el-carousel arrow="always" height="400px">
-        <el-carousel-item v-for="(image, index) in carouselImages" :key="index">
+        <el-carousel-item v-for="(image, index) in (carouselImages.length ? carouselImages : [{ imgCarouselUrl: 'https://img0.baidu.com/it/u=1760989771,2332546193&fm=253&fmt=auto&app=138&f=JPEG?w=1024&h=405' }])" :key="index">
           <img :src="image.imgCarouselUrl" class="w-full h-full md:h-full" />
         </el-carousel-item>
       </el-carousel>
     </div>
+
 
     <!-- 班委信息展示区域 -->
     <div class="w-full flex-grow flex flex-col md:flex-row p-4 gap-4">
@@ -96,9 +118,9 @@ onMounted(() => {
         <h2 class="text-2xl font-extrabold mb-4 text-gray-800">班委信息</h2>
         <div class="w-full h-full max-h-[200px] overflow-y-auto">
           <el-table :data="tableData" :table-layout="tableLayout" class="w-full h-full border border-gray-300">
-            <el-table-column prop="Job" label="职位" width="150" class="text-left border-b border-gray-300" />
-            <el-table-column prop="name" label="姓名" width="150" class="text-left border-b border-gray-300" />
-            <el-table-column prop="Phone" label="电话" class="text-left border-b border-gray-300" />
+            <el-table-column prop="classrolesName" label="职位" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="committeeName" label="姓名" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="phone" label="电话" class="text-left border-b border-gray-300" />
           </el-table>
         </div>
       </div>
@@ -108,8 +130,9 @@ onMounted(() => {
         <h3 class="text-3xl font-semibold text-gray-900 mb-4">班级活动</h3>
         <div class="w-full h-full max-h-[200px] overflow-y-auto">
           <el-table :data="activities" :table-layout="tableLayout" class="w-full h-full border border-gray-300">
-            <el-table-column prop="title" label="活动名称" width="150" class="text-left border-b border-gray-300" />
-            <el-table-column prop="date" label="日期" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="activiteName" label="活动名称" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="address" label="活动地点" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="activiteDate" label="活动日期" width="150" class="text-left border-b border-gray-300" />
           </el-table>
         </div>
       </div>

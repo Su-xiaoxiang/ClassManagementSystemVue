@@ -54,6 +54,7 @@ const rolesid = ref('')
 const userInfo = {
   userId: '',
   token: '',
+  classId: ''
 };
 // 获取 router 实例
 const router = useRouter()
@@ -85,13 +86,15 @@ const loginAction = async () => {
       screen.value = getScreenResolution()
       const res = await login(UserName.value, PassWord.value, deive.value, screen.value)
       if (res.code === 200) {
+        console.log(res.data)
         userInfo.userId = encryptUserId(res.data.userId)
         userInfo.token = res.data.token
         userInfo.rolesid = res.data.rolesid
+        userInfo.classId = res.data.classId
         setInfo(userInfo)
         rolesid.value = res.data.rolesid
         if (Number(rolesid.value) === 1 || Number(rolesid.value) === 3) {
-          router.push({ path: '/admin' })
+          router.push({ path: '/index' })
         } else {
           router.push({ path: '/index' });
         }
