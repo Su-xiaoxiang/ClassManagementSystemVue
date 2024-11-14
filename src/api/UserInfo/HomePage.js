@@ -24,3 +24,11 @@ export  const  getActivities = (classId) => {
     }
   })
 }
+// 获取学习资源
+export  const  getStudyResources = (classId) => {
+  return request.get('/getStudyResources', {
+    params: {
+      classId
+    }
+  })
+}

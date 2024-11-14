@@ -1,20 +1,12 @@
 <script setup>
 //接口调用方式
-import { getImgCarousel,getCLassCommittee,getActivities } from '@/api/UserInfo/HomePage.js'
+import { getImgCarousel,getCLassCommittee,getActivities,getStudyResources } from '@/api/UserInfo/HomePage.js'
 import { onMounted, ref } from 'vue'
 import { getInfo } from '@/utils/storage.js'
 // 普通类型
 const tableLayout = 'auto';
 // 添加更多学习资源
-const resources = [
-  { name: 'Python编程基础', link: 'https://www.example.com/resource1' },
-  { name: '高等数学自学指南', link: 'https://www.example.com/resource2' },
-  { name: '大学英语学习资料', link: 'https://www.example.com/resource3' },
-  { name: '前端开发教程', link: 'https://www.example.com/resource4' },
-  { name: '数据结构与算法', link: 'https://www.example.com/resource5' },
-  { name: '机器学习入门', link: 'https://www.example.com/resource6' },
-  { name: '项目管理技巧', link: 'https://www.example.com/resource7' },
-];
+const resources = ref([]);
 // 轮播图图片数组
 const carouselImages =ref([])
 // 班委信息数组
@@ -30,7 +22,6 @@ const getimgCarousel = async () => {
   try {
     // 使用 await 等待 Promise 完成
     const res = await getImgCarousel(classId.value);
-
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
       // 获取数据并存储到数组
@@ -47,7 +38,6 @@ const getCommittee = async () => {
   try {
     // 使用 await 等待 Promise 完成
     const res = await getCLassCommittee(classId.value);
-
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
       tableData.value = res.data
@@ -63,10 +53,9 @@ const getActivitie = async () => {
   try {
     // 使用 await 等待 Promise 完成
     const res = await getActivities(classId.value);
-
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
-      console.log("获取活动信息成功", res.data);
+      //console.log("获取活动信息成功", res.data);
       activities.value = res.data
    } else {
       console.error("获取轮播图数据失败", res);
@@ -75,11 +64,29 @@ const getActivitie = async () => {
     console.error("请求发生错误：", error)
   }
 }
+/*获取学习资源*/
+const getStudyResource = async () => {
+  try {
+    const res = await getStudyResources(classId.value);
+
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      //console.log("获取学习资源信息成功", res.data);
+      resources.value = res.data
+   } else {
+      console.error("获取学习资源数据失败", res);
+    }
+  } catch (error){
+    console.error("请求发生错误：", error)
+  }
+}
+
 // 记载页面时记载方法
 onMounted( async () => {
   await getimgCarousel()
   await getCommittee()
   await getActivitie()
+  await getStudyResource()
 })
 </script>
 
@@ -142,11 +149,11 @@ onMounted( async () => {
         <h3 class="text-3xl font-semibold text-gray-900 mb-4">学习资源</h3>
         <div class="w-full h-full max-h-[200px] overflow-y-auto">
           <el-table :data="resources" :table-layout="tableLayout" class="w-full h-full border border-gray-300">
-            <el-table-column prop="name" label="资源名称" width="150" class="text-left border-b border-gray-300" />
-            <el-table-column prop="link" label="链接" class="text-left border-b border-gray-300">
+            <el-table-column prop="studyResourcesName" label="资源名称" width="150" class="text-left border-b border-gray-300" />
+            <el-table-column prop="studyResourcesUrl" label="链接" class="text-left border-b border-gray-300">
               <template #default="{ row }">
-                <a :href="row.link" target="_blank" class="hover:underline text-blue-600">
-                  {{ row.link }}
+                <a :href="row.studyResourcesUrl" target="_blank" class="hover:underline text-blue-600">
+                  {{ row.studyResourcesUrl }}
                 </a>
               </template>
             </el-table-column>
