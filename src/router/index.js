@@ -8,6 +8,7 @@ import UserInfo from '@/views/UserInfo/UserInfo/index.vue'
 import UserSituation from '@/views/UserInfo/UserSituation/index.vue'
 import NotFound from '@/404.vue'
 import { loginAction } from '@/api/login.js' // 注意这里的路径
+import AdminLayout from '@/views/admin/AdminLayout.vue'
 
 // 定义路由
 const routes = [
@@ -32,6 +33,44 @@ const routes = [
       { path: 'UserInfo', component: UserInfo },  // 其他子路由
       { path: 'UserSituation', component: UserSituation },  // 其他子路由
     ]
+  },
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: {
+      requiresAuth: true
+    },
+    children: [
+      {
+        path: '',
+        redirect: '/admin/user-list'
+      },
+      {
+        path: 'user-list',
+        name: 'AdminUserList',
+        component: () => import('@/views/admin/UserList.vue'),
+      },
+      {
+        path: 'carousel-list',
+        name: 'AdminCarouselList',
+        component: () => import('@/views/admin/CarouselList.vue'),
+      },
+      {
+        path: 'committee-list',
+        name: 'AdminCommitteeList',
+        component: () => import('@/views/admin/CommitteeList.vue'),
+      },
+      {
+        path: 'activity-list',
+        name: 'AdminActivityList',
+        component: () => import('@/views/admin/ActivityList.vue'),
+      },
+      {
+        path: 'resource-list',
+        name: 'AdminResourceList',
+        component: () => import('@/views/admin/ResourceList.vue'),
+      }
+    ],
   },
   { path: '/:pathMatch(.*)*', component: NotFound } // 通配符路由的语法变化
 ]
