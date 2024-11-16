@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { getUserClassSituation } from '@/api/UserInfo/UserSituation.js';
+import { getUserClassSituation, getUserExtracurricularActivitie, getInternshipinformations } from '@/api/UserInfo/UserSituation.js';
 import { getInfo } from '@/utils/storage.js';
 
 // 获取当前用户ID
@@ -9,7 +9,10 @@ userId.value = getInfo().classId;
 
 // 上课情况数据
 const attendanceData = ref([]);
-
+// 活动情况数据
+const activitiesData = ref([]);
+// 实习情况描述
+const internshipData = ref([])
 // 查询日期
 const queryDate = ref('');
 
@@ -29,16 +32,15 @@ const getUserClassSituations = async () => {
 
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
-      console.log("获取个人信息成功", res.data);
+      //console.log("获取个人课程信息成功", res.data);
       attendanceData.value = res.data;
     } else {
-      console.error("获取个人信息失败", res);
+      console.error("获取个人课程信息失败", res);
     }
   } catch (error) {
     console.error("请求发生错误：", error);
   }
 };
-
 // 计算过滤后的上课情况数据
 const filteredAttendanceData = computed(() => {
   return queryDate.value
@@ -49,10 +51,43 @@ const filteredAttendanceData = computed(() => {
       })
     : attendanceData.value;
 });
+// 获取个人活动情况信息
+const getUserExtracurricularActivities = async () => {
+  try {
+    const res = await getUserExtracurricularActivitie(userId.value);
 
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      //console.log("获取个人活动信息成功", res.data);
+      activitiesData.value = res.data;
+    } else {
+      console.error("获取个人活动信息失败", res);
+    }
+  } catch (error) {
+    console.error("请求发生错误：", error);
+  }
+};
+// 获取个人实习情况信息
+const getInternshipinformation = async () => {
+  try {
+    const res = await getInternshipinformations(userId.value);
+
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      console.log("获取个人实习信息成功", res.data);
+      internshipData.value = res.data;
+    } else {
+      console.error("获取个人实习信息失败", res);
+    }
+  } catch (error) {
+    console.error("请求发生错误：", error);
+  }
+};
 // 页面加载时获取个人信息
 onMounted(async () => {
+  await getUserExtracurricularActivities();
   await getUserClassSituations();
+  await getInternshipinformation()
 });
 </script>
 
@@ -105,9 +140,9 @@ onMounted(async () => {
         <h2 class="text-3xl font-bold mb-6 text-blue-700">课外活动</h2>
         <div class="flex-grow overflow-y-auto border-t-2 border-gray-100 mt-4 pt-4 max-h-[300px]">
           <el-table :data="activitiesData" style="width: 100%" class="text-sm">
-            <el-table-column prop="name" label="活动名称" width="150" />
-            <el-table-column prop="role" label="角色" width="100" />
-            <el-table-column prop="description" label="描述" />
+            <el-table-column prop="studentExtracurricularActivitiesName" label="活动名称" width="150" />
+            <el-table-column prop="studentExtracurricularActivitiesRoles" label="角色" width="100" />
+            <el-table-column prop="studentExtracurricularActivitiesDescription" label="描述" />
           </el-table>
         </div>
       </div>
@@ -117,9 +152,9 @@ onMounted(async () => {
         <h2 class="text-3xl font-bold mb-6 text-blue-700">实习信息</h2>
         <div class="flex-grow overflow-y-auto border-t-2 border-gray-100 mt-4 pt-4 max-h-[300px]">
           <el-table :data="internshipData" style="width: 100%" class="text-sm">
-            <el-table-column prop="company" label="公司" width="150" />
-            <el-table-column prop="position" label="职位" width="150" />
-            <el-table-column prop="description" label="描述" />
+            <el-table-column prop="internshipInformationName" label="公司" width="150" />
+            <el-table-column prop="internshipInformationJob" label="职位" width="150" />
+            <el-table-column prop="internshipInformationDescription" label="描述" />
           </el-table>
         </div>
       </div>
