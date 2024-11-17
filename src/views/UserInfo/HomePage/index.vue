@@ -40,6 +40,7 @@ const getCommittee = async () => {
     const res = await getCLassCommittee(classId.value);
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
+      console.log("获取班委信息成功", res.data);
       tableData.value = res.data
    } else {
       console.error("获取轮播图数据失败", res);

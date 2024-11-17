@@ -1,115 +1,129 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-import { ElMessage } from 'element-plus';
-import { Search, Key, Warning } from '@element-plus/icons-vue';
+import { ref, onMounted, computed, watch } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Search, Key, Warning } from '@element-plus/icons-vue'
 import { getInfo } from '@/utils/storage.js'
-import { adminSelectUser } from  '@/api/admin/index.js'
+import { adminSelectUser, getRolesList, updateUserPassword, delectUserByUserId, updateUser } from '@/api/admin/index.js'
 // 分页相关参数
-const currentPage = ref(1);
-const pageSize = ref(10);
-const total = ref(0);
-const loading = ref(false);
-const searchQuery = ref('');
-const dialogVisible = ref(false);
-const AdddialogVisible = ref(false);
-const showSearchResult = ref(false);
-const resetPasswordVisible = ref(false);
-const currentResetUser = ref(null);
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+const loading = ref(false)
+const searchQuery = ref('')
+const dialogVisible = ref(false)
+const AdddialogVisible = ref(false)
+const showSearchResult = ref(false)
+const resetPasswordVisible = ref(false)
+const currentResetUser = ref(null)
 // 获取当前用户班级ID
 const classId = ref('')
 classId.value = getInfo().classId
+
+// 权限列表
+const rolesList = ref([])
+// 编辑用户
 const currentUser = ref({
+  id: '',
   username: '',
   name: '',
   job: '',
-  className: '',
-});
+  className: ''
+})
+// 新增用户
 const AddcurrentUser = ref({
   username: '',
   name: '',
-  job: '',
-});
+  job: ''
+})
 // 生成模拟用户数据
 const users = ref([])
 
 // 搜索防抖
-const searchTimeout = ref(null);
+const searchTimeout = ref(null)
 const handleSearch = () => {
   if (searchTimeout.value) {
-    clearTimeout(searchTimeout.value);
+    clearTimeout(searchTimeout.value)
   }
   searchTimeout.value = setTimeout(() => {
-    showSearchResult.value = searchQuery.value !== '';
-    updateTotal();
-  }, 300);
-};
+    showSearchResult.value = searchQuery.value !== ''
+    updateTotal()
+  }, 300)
+}
 
 // 过滤用户
 const filteredUsers = computed(() => {
-  if (!searchQuery.value) return users.value;
+  if (!searchQuery.value) return users.value
 
-  const searchTerm = searchQuery.value.toLowerCase().trim();
+  const searchTerm = searchQuery.value.toLowerCase().trim()
   return users.value.filter(user =>
     user.username.toLowerCase().includes(searchTerm)
-  );
-});
+  )
+})
 
 // 分页后的用户数据
 const paginatedUsers = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredUsers.value.slice(start, end);
-});
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return filteredUsers.value.slice(start, end)
+})
 
 // 更新总数
 const updateTotal = () => {
-  total.value = filteredUsers.value.length;
-};
+  total.value = filteredUsers.value.length
+}
 
 // 处理页码改变
 const handleCurrentChange = (val) => {
-  currentPage.value = val;
-};
+  currentPage.value = val
+}
 
 // 处理每页条数改变
 const handleSizeChange = (val) => {
-  pageSize.value = val;
-  currentPage.value = 1;
-};
+  pageSize.value = val
+  currentPage.value = 1
+}
 
 // 处理编辑
 const handleEdit = (row) => {
-  currentUser.value = { ...row };
-  dialogVisible.value = true;
-};
+  currentUser.value = { ...row }
+  dialogVisible.value = true
+}
 
 // 处理删除
-const handleDelete = (row) => {
-  users.value = users.value.filter(user => user.id !== row.id);
-  ElMessage.success('删除成功');
-};
-
-// 处理保存
-const handleSave = () => {
-  if (!currentUser.value.userId || !currentUser.value.name) {
-    ElMessage.warning('请填写必要信息');
+const handleDelete = async (row) => {
+  if (!row.id) {
+    ElMessage.error("用户ID缺失，无法删除用户");
     return;
   }
-
-  const index = users.value.findIndex(user => user.id === currentUser.value.id);
-  if (index > -1) {
-    users.value[index] = { ...currentUser.value };
-  } else {
-    users.value.push({
-      ...currentUser.value,
-      id: Date.now(),
-      createTime: new Date().toISOString().split('T')[0]
-    });
+  try {
+    const res = await delectUserByUserId(row.id);
+    if (res && res.code === 200) {
+      ElMessage.success('已删除用户：'+row.name);
+      window.location.reload();
+    } else {
+      ElMessage.error('删除用户失败，请联系技术人员');
+    }
+  } catch (error) {
+    ElMessage.error('网络错误，稍后重试');
   }
+}
 
-  dialogVisible.value = false;
-  ElMessage.success('保存成功');
-};
+// 处理保存
+const handleSave = async () => {
+  //console.log(currentUser.value.id,currentUser.value.name,currentUser.value.job)
+  try {
+    const res = await updateUser(currentUser.value.id,currentUser.value.name,currentUser.value.job)
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+        ElMessage.success('更新用户信息成功')
+        window.location.reload();
+    } else {
+      ElMessage.error('更新用户失败，请联系技术人员')
+    }
+  } catch (error) {
+    ElMessage.error('请求发生错误')
+  }
+}
 // 函数
 //获取用户信息
 const adminSelectUsers = async () => {
@@ -118,38 +132,67 @@ const adminSelectUsers = async () => {
 
     // 检查返回的结果是否成功
     if (res && res.code === 200) {
-      console.log("获取个人信息成功", res.data);
+      //console.log("获取个人信息成功", res.data);
       users.value = res.data
     } else {
-      console.error("获取个人信息失败", res);
+       ElMessage.error('获取个人信息失败，请联系技术人员')
     }
-  } catch (error){
-    console.error("请求发生错误：", error)
+  } catch (error) {
+    ElMessage.error('请求发生错误')
   }
+}
+//获取权限信息
+const getRolesLists = async () => {
+  try {
+    const res = await getRolesList()
 
+    // 检查返回的结果是否成功
+    if (res && res.code === 200) {
+      //console.log("获取权限信息成功", res.data);
+      rolesList.value = res.data
+    } else {
+       ElMessage.error('获取权限列表失败，请联系技术人员')
+    }
+  } catch (error) {
+     ElMessage.error('请求发生错误')
+  }
 }
 // 监听搜索结果变化
 watch(filteredUsers, () => {
-  updateTotal();
-  currentPage.value = 1;
-});
+  updateTotal()
+  currentPage.value = 1
+})
 
 onMounted(async () => {
   await adminSelectUsers()
-  updateTotal();
-});
+  await getRolesLists()
+  updateTotal()
+})
 
 // 添加重置密码相关方法
 const handleResetPassword = (row) => {
-  currentResetUser.value = row;
-  resetPasswordVisible.value = true;
-};
+  currentResetUser.value = row
+  resetPasswordVisible.value = true
+}
 
-const confirmResetPassword = () => {
-  // 这里添加实际的密码重置逻辑
-  ElMessage.success(`已重置用户 ${currentResetUser.value.name} 的密码为：123456`);
-  resetPasswordVisible.value = false;
-  currentResetUser.value = null;
+const confirmResetPassword = async () => {
+  const userId = currentResetUser.value.id;
+  if (!userId) {
+    ElMessage.error("用户ID缺失，无法重置密码");
+    return;
+  }
+  try {
+    const res = await updateUserPassword(userId);
+    if (res && res.code === 200) {
+      ElMessage.success(`已重置用户 ${currentResetUser.value.name} 的密码为：123456`);
+      resetPasswordVisible.value = false;
+      currentResetUser.value = null;
+    } else {
+      ElMessage.error('重置密码失败，请联系技术人员');
+    }
+  } catch (error) {
+    ElMessage.error('网络错误，稍后重试');
+  }
 };
 </script>
 
@@ -160,7 +203,7 @@ const confirmResetPassword = () => {
       <div class="search-box flex-grow max-w-md relative">
         <el-input
           v-model="searchQuery"
-          placeholder="搜索用户名、姓名或班级..."
+          placeholder="搜索用户名"
           class="custom-search-input"
           :prefix-icon="Search"
           clearable
@@ -203,7 +246,9 @@ const confirmResetPassword = () => {
               @click="handleResetPassword(row)"
             >
               <template #icon>
-                <el-icon class="mr-1"><Key /></el-icon>
+                <el-icon class="mr-1">
+                  <Key />
+                </el-icon>
               </template>
               重置密码
             </el-button>
@@ -216,7 +261,8 @@ const confirmResetPassword = () => {
               size="small"
               type="danger"
               @click="handleDelete(row)"
-            >删除</el-button>
+            >删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -242,22 +288,24 @@ const confirmResetPassword = () => {
       width="500px"
     >
       <el-form :model="currentUser" label-width="100px">
-        <el-form-item label="用户名" required>
-          <el-input v-model="currentUser.username" />
+        <el-form-item label="用户名"  >
+          <el-input v-model="currentUser.username" disabled/>
         </el-form-item>
         <el-form-item label="姓名" required>
           <el-input v-model="currentUser.name" />
         </el-form-item>
-        <el-form-item label="职务" >
-          <el-select  v-model="currentUser.job" style="width: 100%">
-            <el-option label="班长" value="2" />
-            <el-option label="团支书" value="3" />
-            <el-option label="学习委员" value="4" />
-            <el-option label="学生" value="9" />
+        <el-form-item label="职务">
+          <el-select v-model="currentUser.job" style="width: 100%">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.rolesId"
+              :label="item.rolesName"
+              :value="item.rolesId"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="班级">
-          <el-input v-model="currentUser.className" />
+          <el-input v-model="currentUser.className" disabled/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -268,7 +316,7 @@ const confirmResetPassword = () => {
       </template>
     </el-dialog>
 
- <!-- 增加编辑对话框 -->
+    <!-- 增加编辑对话框 -->
     <el-dialog
       v-model="AdddialogVisible"
       :title="'添加用户'"
@@ -281,12 +329,14 @@ const confirmResetPassword = () => {
         <el-form-item label="姓名" required>
           <el-input v-model="AddcurrentUser.name" />
         </el-form-item>
-        <el-form-item label="职务" >
-          <el-select  v-model="AddcurrentUser.job" style="width: 100%">
-            <el-option label="班长" value="2" />
-            <el-option label="团支书" value="3" />
-            <el-option label="学习委员" value="4" />
-            <el-option label="学生" value="9" />
+        <el-form-item label="职务">
+          <el-select v-model="AddcurrentUser.job" style="width: 100%">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.value"
+              :label="item.rolesName"
+              :value="item.rolesId"
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -304,7 +354,9 @@ const confirmResetPassword = () => {
       width="400px"
     >
       <div class="text-center">
-        <el-icon class="text-5xl text-warning mb-4"><Warning /></el-icon>
+        <el-icon class="text-5xl text-warning mb-4">
+          <Warning />
+        </el-icon>
         <p class="text-lg mb-2">确定要重置该用户的密码吗？</p>
         <p class="text-gray-500 text-sm">重置后的默认密码将为：123456</p>
       </div>
